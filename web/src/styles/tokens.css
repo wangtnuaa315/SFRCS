@@ -1,0 +1,23 @@
+:root {
+  /* 表面层 (Surfaces & Backgrounds) */
+  --color-void: #030509; /* 极暗的午夜蓝黑，比纯黑更有透气感 */
+  --color-panel-bg: rgba(10, 13, 20, 0.7); /* 面板背景 */
+  --color-panel-bg-solid: #0A0D14; /* 纯实心面板背景 */
+  --color-border: #1E293B; /* Slate-800，面板极细描边 */
+  
+  /* 战术指示色 (Tactical Accents) */
+  --color-accent-sos: #FF3C00; /* 霓虹橙: 危急求救 */
+  --color-accent-safe: #00E676; /* 雷达绿: 在线安全/正常 */
+  --color-accent-ai: #9333EA; /* 毫米波紫: 感知识别 */
+  
+  /* 文字与信息流 (Text & Info) */
+  --color-text-primary: #F8FAFC; /* 冰晶白: 主信息 */
+  --color-text-muted: #64748B; /* 烟灰蓝: 次级说明/单位 */
+  
+  /* 字体规范 (Typography) */
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace; /* 战术数据 */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* 通用阅读 */
+
+  /* 面板样式属性 */
+  --hud-blur: 12px;
+}

@@ -1,0 +1,54 @@
+/* 战术数据等宽字体类 */
+.mono-text {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums; /* 等宽数字对齐 */
+}
+
+.mono-large {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.mono-normal {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.mono-small {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--color-text-muted);
+}
+
+/* 缩写单位字体类 */
+.unit-text {
+  font-family: var(--font-sans);
+  font-size: 0.6em;
+  color: var(--color-text-muted);
+  margin-left: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* 通用阅读字体类 */
+.sans-title {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--color-text-primary);
+}
+
+.sans-body {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
