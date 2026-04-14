@@ -1,9 +1,10 @@
 :root {
   /* 表面层 (Surfaces & Backgrounds) */
-  --color-void: #030509; /* 极暗的午夜蓝黑，比纯黑更有透气感 */
-  --color-panel-bg: rgba(10, 13, 20, 0.7); /* 面板背景 */
-  --color-panel-bg-solid: #0A0D14; /* 纯实心面板背景 */
-  --color-border: #1E293B; /* Slate-800，面板极细描边 */
+  --color-void: #030509; /* Void Black */
+  --color-surface: #101419; 
+  --color-surface-container-low: #181C21; 
+  --color-panel-bg: rgba(16, 20, 25, 0.8); /* Tactical Glass */
+  --color-border: rgba(255, 60, 0, 0.15); /* Ghost Border */
   
   /* 战术指示色 (Tactical Accents) */
   --color-accent-sos: #FF3C00; /* 霓虹橙: 危急求救/P0 */

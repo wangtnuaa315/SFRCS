@@ -38,7 +38,7 @@ const switchChannel = (channelId) => {
 </script>
 
 <template>
-  <div class="main-video-window hud-panel">
+  <div class="main-video-window">
     <RecognitionVideoStage
       :active-channel="activeChannel"
       :active-target="activeTarget"

@@ -19,23 +19,17 @@ const emit = defineEmits(['switch-channel'])
   <div class="recognition-stage">
     <div v-if="showHeader" class="video-header">
       <div class="header-left">
-        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
-        <span class="mono-small header-title">{{ headerTitle }}</span>
-        <div class="live-badge">LIVE</div>
+        <span class="header-title">实时视频 // {{ activeChannel?.id || 'NO-SIGNAL' }}</span>
       </div>
       <div class="header-right">
-        <span class="mono-small">{{ activeChannel?.label }}</span>
-        <span class="mono-small channel-floor">{{ activeChannel?.floor }}</span>
+        <span class="rec-label">REC <span class="rec-dot">●</span></span>
       </div>
     </div>
 
     <div class="main-video-area">
       <div class="video-bg">
         <div class="osd-overlay">
-          <div class="osd-item mono-small">CAM: {{ activeChannel?.id }}</div>
-          <div class="osd-item mono-small osd-right">
-            REC <span class="rec-dot">●</span>
-          </div>
+
           <div class="osd-item mono-small osd-bl">28.7891N 121.3765E</div>
           <div class="osd-item mono-small osd-br">14:23:45</div>
         </div>
@@ -67,12 +61,7 @@ const emit = defineEmits(['switch-channel'])
 
         <div class="scan-line" v-if="detections.length === 0"></div>
         <div class="video-grid"></div>
-      </div>
-
-      <div v-if="showSuggestion && activeTarget" class="ai-suggestion-bar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm1 14.93V17a1 1 0 0 0-2 0v-.07A8 8 0 0 1 4.07 9H5a1 1 0 0 0 0-2h-.93A8 8 0 0 1 11 4.07V5a1 1 0 0 0 2 0v-.93A8 8 0 0 1 19.93 11H19a1 1 0 0 0 0 2h.93A8 8 0 0 1 13 19.93z"/></svg>
-        <span class="mono-small suggestion-label">AI建议</span>
-        <span class="sans-body suggestion-text">{{ suggestionText }}</span>
+        <div class="video-bottom-label mono-small">CAM_01_HELMET</div>
       </div>
     </div>
 
@@ -109,42 +98,40 @@ const emit = defineEmits(['switch-channel'])
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 8px 0; /* Remove horizontal padding since it's aligned */
+  background: transparent;
   flex-shrink: 0;
+  margin-bottom: 8px;
 }
 
 .header-left {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: var(--color-text-muted);
+}
+
+.header-title {
+  color: var(--color-accent-sos); /* "#FF3C00" 战术橙红 */
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
-.header-title {
-  color: var(--color-text-primary);
-}
-
-.channel-floor {
-  color: var(--color-text-muted);
-  font-size: 10px;
-}
-
-.live-badge {
-  background-color: var(--color-accent-sos);
-  color: #fff;
+.rec-label {
+  color: var(--color-accent-safe); /* 录制状态绿色 */
   font-family: var(--font-mono);
-  font-size: 9px;
-  font-weight: bold;
-  padding: 1px 4px;
-  border-radius: 2px;
-  letter-spacing: 0.1em;
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .main-video-area {
@@ -152,12 +139,15 @@ const emit = defineEmits(['switch-channel'])
   position: relative;
   overflow: hidden;
   min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .video-bg {
+  flex: none;
   width: 100%;
-  height: 100%;
-  background: radial-gradient(ellipse at 30% 40%, #1a2a3a 0%, #030509 100%);
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(ellipse at 30% 40%, #1a2a3a 0%, var(--color-void) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -165,6 +155,19 @@ const emit = defineEmits(['switch-channel'])
 .osd-overlay {
   position: absolute;
   inset: 0;
+  pointer-events: none;
+}
+
+.video-target-tag {
+  position: absolute;
+  top: 32px;
+  left: 8px;
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid rgba(147, 51, 234, 0.4); /* AI 识别紫色外框 */
+  border-left: 2px solid rgb(147, 51, 234);
+  padding: 4px 8px;
+  z-index: 5;
   pointer-events: none;
 }
 
@@ -250,62 +253,39 @@ const emit = defineEmits(['switch-channel'])
   pointer-events: none;
 }
 
-.video-target-tag {
-  position: absolute;
-  top: 36px;
-  left: 8px;
-  z-index: 2;
-  color: var(--color-accent-warning);
-  background-color: rgba(0, 0, 0, 0.7);
-  border: 1px solid rgba(245, 158, 11, 0.35);
-  padding: 3px 8px;
-}
-
-.ai-suggestion-bar {
+.video-bottom-label {
   position: absolute;
   bottom: 0;
   left: 0;
-  right: 0;
-  padding: 6px 12px;
-  background-color: rgba(3, 5, 9, 0.88);
-  border-top: 1px solid rgba(147, 51, 234, 0.25);
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  width: 100%;
+  background: rgba(3, 5, 9, 0.85); /* 底部深色半透明遮罩 */
   color: var(--color-text-muted);
-}
-
-.suggestion-label {
-  color: var(--color-accent-ai);
-}
-
-.suggestion-text {
-  font-size: 12px;
+  padding: 4px 8px;
+  text-align: right;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .video-grid-row {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-  padding: 4px;
+  gap: 8px;
+  margin-top: 8px;
   flex-shrink: 0;
-  border-top: 1px solid var(--color-border);
-  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .video-thumb {
   position: relative;
   cursor: pointer;
-  border: 1px solid var(--color-border);
-  transition: border-color 0.15s;
-}
-
-.video-thumb:hover {
-  border-color: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15); /* Ghost Border */
+  transition: all 0.2s ease;
+  background-color: rgba(3, 5, 9, 0.5);
+  display: flex;
+  flex-direction: column;
 }
 
 .video-thumb.active {
-  border-color: var(--color-accent-safe);
+  border: 1px solid rgba(255, 60, 0, 0.4);
+  box-shadow: inset 0 0 12px rgba(255, 60, 0, 0.15);
 }
 
 .video-thumb.weak {
@@ -313,48 +293,31 @@ const emit = defineEmits(['switch-channel'])
 }
 
 .thumb-bg {
-  aspect-ratio: 16/9;
-  background: radial-gradient(ellipse at center, #1a2a3a 0%, #030509 100%);
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(ellipse at center, #1a2a3a 0%, var(--color-void) 100%);
   position: relative;
   overflow: hidden;
-}
-
-.thumb-det-hint {
-  position: absolute;
-  top: 20%;
-  left: 15%;
-  width: 40%;
-  height: 45%;
-  border: 1px solid var(--color-accent-ai);
-  opacity: 0.7;
-}
-
-.weak-overlay {
-  position: absolute;
-  inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--color-text-muted);
+  flex: 1;
 }
 
 .thumb-label {
-  padding: 2px 4px;
+  padding: 4px;
   font-size: 9px;
   color: var(--color-text-muted);
-  background-color: rgba(0, 0, 0, 0.6);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.video-thumb.active .thumb-label {
+  color: var(--color-accent-sos);
+  background-color: rgba(255, 60, 0, 0.1);
+  border-top-color: rgba(255, 60, 0, 0.2);
 }
 
 .thumb-active-indicator {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background-color: var(--color-accent-safe);
+  display: none; /* 移除旧的顶部黄条 */
 }
 </style>

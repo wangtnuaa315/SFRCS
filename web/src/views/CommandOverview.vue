@@ -5,14 +5,16 @@ import { useTacticalStore } from '../stores/tactical'
 // 布局组件
 import TopCommandBar from '../components/layout/TopCommandBar.vue'
 import BottomBar from '../components/layout/BottomBar.vue'
+import SideNav from '../components/layout/SideNav.vue'
 
 // 地图
 import TacticalMap from '../components/map/TacticalMap.vue'
 
-// 中央视频
+// 中央视频 -> HUD左侧
 import MainVideoWindow from '../components/video/MainVideoWindow.vue'
+import SensorMatrix from '../components/sensors/SensorMatrix.vue'
 
-// 右侧面板
+// 右侧面板 -> HUD右侧
 import AlertList from '../components/alerts/AlertList.vue'
 import TaskList from '../components/mission/TaskList.vue'
 import PersonnelCards from '../components/personnel/PersonnelCards.vue'
@@ -26,52 +28,80 @@ onMounted(() => {
 
 <template>
   <div class="command-overview">
-    <!-- 顶栏：任务信息横条 -->
+    <!-- V2版：左侧竖向主路由导航 -->
+    <SideNav />
+
+    <!-- 顶栏：系统状态条 (缩进避开SideNav) -->
     <TopCommandBar />
 
-    <!-- 主区域：三列布局 -->
-    <div class="main-area">
-      <!-- 左列：GIS战术地图 -->
-      <div class="left-panel">
-        <TacticalMap />
+    <!-- 全局底层：GIS战术地图 -->
+    <div class="map-layer">
+      <TacticalMap />
+    </div>
+
+    <!-- 悬浮层：HUD交互面版 (pointer-events: none, 面板本身 pointer-events: auto) -->
+    <div class="hud-layer">
+      
+      <!-- 左侧HUD：视频 + 传感器 -->
+      <div class="hud-left panel-column">
+        <!-- 视频悬浮窗 -->
+        <div class="hud-module module-video">
+          <MainVideoWindow />
+        </div>
+        
+        <!-- 环境传感器矩阵 -->
+        <div class="hud-module module-sensors">
+          <SensorMatrix />
+        </div>
       </div>
 
-      <!-- 中列：主视频 + AI识别 -->
-      <div class="center-panel">
-        <MainVideoWindow />
-      </div>
-
-      <!-- 右列：告警 + 任务 + 人员 -->
-      <div class="right-panel">
-        <!-- 右上：实时告警列表 -->
-        <div class="right-section right-top">
+      <!-- 右侧HUD：告警 + 任务 + 人员 -->
+      <div class="hud-right panel-column">
+        <div class="hud-module right-section right-top">
           <AlertList />
         </div>
 
-        <!-- 右中：当前任务列表 -->
-        <div class="right-section right-mid">
-          <div class="hud-panel task-panel-wrapper">
-            <div class="panel-header">
-              <div class="header-title">
-                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                <span class="panel-title">当前任务</span>
-              </div>
-              <span class="mono-small task-legend">进行中 / 待回执 / 超时</span>
-            </div>
-            <div class="task-scroll">
-              <TaskList />
-            </div>
+        <div class="hud-module right-section right-mid task-panel-wrapper">
+          <div class="task-panel-header">
+            <span class="task-panel-title">当前任务列表</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </div>
+          <div class="task-scroll">
+            <TaskList />
           </div>
         </div>
 
-        <!-- 右下：人员状态卡片 -->
-        <div class="right-section right-bot">
+        <div class="hud-module right-section right-bot">
           <PersonnelCards />
         </div>
       </div>
-    </div>
 
-    <!-- 底栏：语音转写 + 时间线 + 快捷操作 -->
+      <!-- 中底部HUD：环境概要（绝对定位在hud-layer内部，相对hud-layer定位） -->
+      <div class="hud-center-bottom">
+        <div class="env-summary-panel">
+          <div class="env-item">
+            <span class="env-label">火情等级</span>
+            <span class="env-val" style="color: var(--color-accent-sos);">CAT-03</span>
+          </div>
+          <div class="env-divider"></div>
+          <div class="env-item">
+            <span class="env-label">已确认幸存</span>
+            <span class="env-val" style="color: var(--color-accent-safe);">02</span>
+          </div>
+          <div class="env-divider"></div>
+          <div class="env-item">
+            <span class="env-label">环境风速</span>
+            <span class="env-val" style="color: var(--color-text-primary);">NW <span class="mono-normal">14m/s</span></span>
+          </div>
+          <div class="env-divider"></div>
+          <div class="env-item">
+            <span class="env-label">链路稳定性</span>
+            <span class="env-val" style="color: var(--color-accent-safe);">99.8%</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 底栏：系统状态条 (悬浮) -->
     <BottomBar />
   </div>
 </template>
@@ -86,73 +116,111 @@ onMounted(() => {
   overflow: hidden;
 }
 
-/* 主区域：三列布局，填充顶栏和底栏之间的剩余高度 */
-.main-area {
-  flex: 1;
+/* 主布局 */
+.command-overview {
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  min-height: 0; /* 关键：让flex子项不溢出 */
+  flex-direction: column;
+  background-color: var(--color-void);
   overflow: hidden;
-  gap: 0;
-}
-
-/* 左列：GIS战术地图，占35% */
-.left-panel {
-  flex: 0 0 34%;
-  min-width: 0;
   position: relative;
-  border-right: 1px solid var(--color-border);
-  overflow: hidden;
 }
 
-/* 中列：主视频AI窗口，占40% */
-.center-panel {
-  flex: 0 0 38%;
-  min-width: 0;
-  border-right: 1px solid var(--color-border);
-  overflow: hidden;
+/* 底层地理地图层 */
+.map-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1; /* 在 SideNav 和 TopBar 之下 */
+}
+
+/* 交互悬浮层 (HUD) */
+.hud-layer {
+  position: absolute;
+  top: 72px; /* 顶栏56px + 16px Padding */
+  left: 88px; /* 左导72px + 16px Padding */
+  right: 16px; /* 16px Padding */
+  bottom: 36px; /* 底栏高度36px */
+  z-index: 10;
+  pointer-events: none; /* 让点击穿透到底层地图 */
+  display: flex;
+  justify-content: space-between; /* 左右HUD分开 */
+}
+
+.panel-column {
   display: flex;
   flex-direction: column;
+  gap: 16px;
+  height: 100%;
 }
 
-/* 右列：三段式面板，占25% */
-.right-panel {
-  flex: 0 0 28%;
-  min-width: 320px;
+.hud-left {
+  width: 320px; /* Video is square + 4 inputs, 320 is a good size */
+}
+
+.hud-right {
+  width: 320px;
+  padding-bottom: 16px; /* 与底栏保持间距，体现浮层效果 */
+}
+
+.hud-module {
+  pointer-events: auto; /* 恢复 HUD 本身的点击交互 */
+  background-color: var(--color-surface-container-low, #181C21);
+  border: 1px solid var(--color-border);
+  border-radius: 8px !important; /* 修改为圆润风格，强制覆盖 */
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden !important;
+  transform: translateZ(0); /* 强制剪裁内部合成层圆角 */
 }
 
+/* 左侧具体尺寸 */
+.module-video {
+  height: max-content;
+  flex-shrink: 0;
+}
+
+.module-sensors {
+  flex-shrink: 0;
+  height: max-content;
+}
+
+/* 右侧具体尺寸 */
 .right-section {
-  flex: 1 1 0;
-  overflow: hidden;
-  border-bottom: 1px solid var(--color-border);
   display: flex;
   flex-direction: column;
 }
-.right-section:last-child {
-  border-bottom: none;
-}
 
-.right-top,
-.right-mid,
-.right-bot {
+.right-section.right-top {
+  flex: 2;
   min-height: 0;
 }
 
-/* 任务面板内部 */
+.right-section.right-mid {
+  flex: 1.5;
+  min-height: 0;
+}
+
+.right-section.right-bot {
+  flex: 1.2;
+  min-height: 0;
+}
+
+/* 覆盖原始组件内样式的一些适配 */
 .task-panel-wrapper {
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
 }
 
 .panel-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
+  padding: 6px 10px;
   border-bottom: 1px solid var(--color-border);
   flex-shrink: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01));
@@ -163,15 +231,13 @@ onMounted(() => {
   align-items: center;
   gap: 6px;
   color: var(--color-accent-sos);
-  font-weight: 700;
-  letter-spacing: 0.04em;
 }
 
 .panel-title {
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.02em;
   color: var(--color-accent-sos);
 }
 
@@ -180,25 +246,90 @@ onMounted(() => {
   font-size: 10px;
 }
 
+.task-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--color-border);
+  flex-shrink: 0;
+  color: var(--color-text-muted);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.task-panel-title {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+  letter-spacing: 0.02em;
+}
+
 .task-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
+  padding: 0;
 }
 .task-scroll::-webkit-scrollbar { display: none; }
 
-@media (max-width: 1500px) {
-  .left-panel {
-    flex-basis: 33%;
-  }
+/* 中央底部浮层 */
+.hud-center-bottom {
+  position: absolute;
+  bottom: 8px; /* 离底栏8px，体现悬浮 */
+  left: 50%;
+  transform: translateX(-50%);
+  pointer-events: auto;
+  z-index: 20;
+}
 
-  .center-panel {
-    flex-basis: 37%;
-  }
+.env-summary-panel {
+  display: flex;
+  align-items: stretch;
+  width: 420px;
+  height: 56px;
+  background: rgba(10, 14, 20, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 60, 0, 0.18);
+  border-radius: 8px !important; /* 修改为圆润风格，强制覆盖 */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255,255,255,0.04);
+}
 
-  .right-panel {
-    flex-basis: 30%;
-    min-width: 340px;
-  }
+.env-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  padding: 0 8px;
+}
+
+.env-divider {
+  width: 1px;
+  background: rgba(255, 60, 0, 0.15);
+  margin: 10px 0;
+}
+
+.env-label {
+  color: var(--color-text-muted);
+  font-size: 9px;
+  font-family: var(--font-sans);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.env-val {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+}
+
+.env-divider {
+  width: 1px;
+  height: 24px;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 </style>

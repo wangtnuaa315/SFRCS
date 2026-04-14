@@ -60,10 +60,6 @@ const mappedTasks = computed(() => {
 
 <template>
   <div class="task-list">
-    <div class="list-header mono-small">
-      <span>— 当前活跃任务</span>
-    </div>
-
     <TaskCard
       v-for="task in mappedTasks"
       :key="task.id"
@@ -80,11 +76,6 @@ const mappedTasks = computed(() => {
 .task-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-}
-.list-header {
-  color: var(--color-accent-safe);
-  margin-bottom: 4px;
-  letter-spacing: 0.1em;
+  gap: 2px;
 }
 </style>

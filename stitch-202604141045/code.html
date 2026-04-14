@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>火眼搜援 OS - 综合态势总控 V2</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;700;900&amp;family=Inter:wght@400;700&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#ffdad6",
+                        "surface-container-highest": "#32353b",
+                        "primary-fixed": "#ffdad2",
+                        "on-error": "#690005",
+                        "primary-container": "#ff562d",
+                        "on-tertiary-container": "#400071",
+                        "tertiary-container": "#b66dff",
+                        "secondary-fixed-dim": "#00e475",
+                        "tertiary-fixed-dim": "#ddb8ff",
+                        "on-surface-variant": "#e8bdb3",
+                        "on-primary-fixed-variant": "#8a1c00",
+                        "on-background": "#e0e2ea",
+                        "on-secondary-container": "#00622e",
+                        "on-secondary-fixed": "#00210b",
+                        "inverse-primary": "#b42800",
+                        "on-primary-container": "#560e00",
+                        "secondary": "#00E676",
+                        "surface-container-low": "#181c21",
+                        "surface-container": "#1c2025",
+                        "surface-dim": "#101419",
+                        "surface-bright": "#36393f",
+                        "surface": "#101419",
+                        "primary": "#FF3C00",
+                        "on-primary": "#621100",
+                        "on-secondary": "#003918",
+                        "on-tertiary": "#490080",
+                        "on-primary-fixed": "#3c0700",
+                        "surface-container-high": "#272a30",
+                        "on-secondary-fixed-variant": "#005226",
+                        "surface-variant": "#32353b",
+                        "surface-tint": "#ffb4a2",
+                        "on-tertiary-fixed-variant": "#6800b4",
+                        "tertiary": "#9333EA",
+                        "secondary-fixed": "#62ff96",
+                        "inverse-on-surface": "#2d3036",
+                        "error": "#FF3C00",
+                        "surface-container-lowest": "#0b0e14",
+                        "outline": "#ae887f",
+                        "error-container": "#93000a",
+                        "on-tertiary-fixed": "#2c0051",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-surface": "#e0e2ea",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "secondary-container": "#05e777",
+                        "background": "#030509",
+                        "inverse-surface": "#e0e2ea",
+                        "outline-variant": "#5e3f38"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "9999px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk"],
+                        "body": ["Inter"],
+                        "label": ["Space Grotesk"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .segmented-bar div { height: 100%; width: 8px; margin-right: 2px; }
+        .glass-panel { background: rgba(16, 20, 25, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 60, 0, 0.1); }
+        .active-glow { box-shadow: 0 0 15px rgba(255, 60, 0, 0.4); }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #FF3C00; }
+        @keyframes marquee {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        .marquee-container {
+            display: inline-block;
+            animation: marquee 20s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-[#030509] text-on-surface font-body overflow-hidden h-screen select-none">
+<!-- Top Navigation Shell -->
+<header class="fixed top-0 left-0 w-full flex justify-between items-center px-6 h-16 bg-[#030509] text-slate-500 z-[60] border-b border-[#FF3C00]/10">
+<div class="flex items-center gap-4">
+<span class="font-headline font-black text-xl tracking-widest text-[#FF3C00]">火眼搜援</span>
+<div class="h-6 w-[1px] bg-slate-800"></div>
+<span class="font-mono text-xs text-secondary tracking-widest uppercase">任务 · 3号楼内攻搜救</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined hover:bg-[#FF3C00]/10 p-2 cursor-pointer transition-colors duration-150">timer</span>
+<span class="font-mono text-[10px] uppercase">任务时长</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined hover:bg-[#FF3C00]/10 p-2 cursor-pointer transition-colors duration-150">percent</span>
+<span class="font-mono text-[10px] uppercase">已搜覆盖</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined hover:bg-[#FF3C00]/10 p-2 cursor-pointer transition-colors duration-150">sensors</span>
+<span class="font-mono text-[10px] uppercase">MESH·在线</span>
+</div>
+<div class="bg-primary/20 text-primary px-3 py-1 font-headline font-bold text-xs uppercase tracking-tighter">现场行动</div>
+</div>
+</header>
+<!-- Side Navigation Shell -->
+<nav class="fixed left-0 top-0 h-full flex flex-col items-center py-8 z-50 bg-[#101419]/80 backdrop-blur-xl w-[72px] border-r border-[#FF3C00]/15 pt-20">
+<div class="flex flex-col gap-8 flex-1">
+<button class="flex flex-col items-center gap-1 text-[#FF3C00] border-l-2 border-[#FF3C00] bg-[#FF3C00]/5 py-2 w-full active:scale-95 duration-75">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">态势</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full transition-all">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">AI感知</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full">
+<span class="material-symbols-outlined">grid_view</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">热力图</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">人员安全</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full">
+<span class="material-symbols-outlined">assignment</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">任务管理</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full">
+<span class="material-symbols-outlined">hub</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">链路状态</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-slate-400 opacity-70 hover:opacity-100 hover:bg-slate-800 py-2 w-full">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body text-[10px] font-bold uppercase tracking-widest">任务复盘</span>
+</button>
+</div>
+<div class="group relative">
+<button class="bg-gradient-to-b from-[#FF3C00] to-[#93000A] text-white w-12 h-12 flex flex-col items-center justify-center font-bold active-glow text-[10px] leading-tight">
+<span>SOS</span>
+<span>紧急</span>
+</button>
+<div class="absolute left-full ml-4 top-1/2 -translate-y-1/2 bg-black px-2 py-1 text-[8px] whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity">(长按触发)</div>
+</div>
+</nav>
+<!-- Main Content Area (GIS Background) -->
+<main class="relative ml-[72px] mt-16 h-[calc(100vh-64px)] w-[calc(100vw-72px)] overflow-hidden">
+<!-- GIS Tactical Map Simulation -->
+<div class="absolute inset-0 z-0 bg-[#030509]">
+<div class="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none" data-alt="Monochrome tactical satellite map" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCR0kG5azqFd2QWUbpsJ55v7oHXjWbqG7VvPAm0HqcAhUJBh2VjmcsMiUYh1iCay_yBvzNP6Ay6RhzT3DlP_luAaHjDnX5d_iYGkBGlVrNDqrGf4HJAXZuhR5TdX5W_j4joNMME2fqKbHBWHB3l2ZgtAVO0OoazaR6D8EqazbOkTDm3T--pp0jDq_bP5AhQx4oXiI25rieytZIJAcWRVkGw68OHSm6EYIYGMjrIw57twXF7wymMGK1EaNRmi4LKZUrjBqFjYyWBxDO4'); background-size: cover; filter: grayscale(100%) invert(100%);"></div>
+<!-- Map Markers -->
+<div class="absolute top-[30%] left-[45%] flex flex-col items-center gap-1 group">
+<div class="w-4 h-4 bg-secondary animate-pulse flex items-center justify-center"><span class="text-[10px] font-mono text-black">FF-01</span></div>
+<div class="w-[1px] h-12 bg-secondary/50"></div>
+</div>
+<div class="absolute top-[45%] left-[55%] flex flex-col items-center gap-1">
+<div class="w-4 h-4 bg-primary animate-ping"></div>
+<div class="text-[10px] font-mono text-primary mt-2">火情范围_ALPHA</div>
+</div>
+<div class="absolute top-[35%] left-[60%] border-2 border-tertiary w-32 h-32 opacity-20"></div>
+<div class="absolute top-[38%] left-[62%]">
+<span class="material-symbols-outlined text-tertiary animate-pulse" style="font-variation-settings: 'FILL' 1;">psychology</span>
+<div class="text-[8px] font-mono text-tertiary">AI_目标扫描</div>
+</div>
+</div>
+<!-- Left HUD Panel -->
+<aside class="absolute left-6 top-6 w-[280px] flex flex-col gap-4 z-10">
+<!-- Video Carousel -->
+<div class="glass-panel p-2 flex flex-col gap-2">
+<div class="flex items-center justify-between px-2 py-1 bg-surface-container-low mb-1">
+<span class="font-headline text-[10px] font-bold uppercase tracking-widest text-primary">实时视频 // FF-01</span>
+<span class="font-mono text-[10px] text-secondary">REC •</span>
+</div>
+<div class="aspect-video w-full bg-black relative">
+<img class="w-full h-full object-cover grayscale brightness-75" data-alt="Tactical helmet cam view" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCdLpkwfmx0FbVhsiv4LjO6YctTAj7j7oU6t3I3krNSViqlyam6oGfWBP7pL9zD08ukJAnTs5lLTixjnAobFPIaunSdNKywhTZpTwLOeQtwM0D3yzn0ofn1XxY8INFMZtGal0TCieekGkaWcCxXyo3RrkUtojV1buTn1VPin1rv49HXq1ms9iNRSYrMaYoETgnp3kwZ4c8fn-DMY2vgq3I6xnRNDypAdugosE_48izIV7d3VwkZC7jUNHzaTwoqkvOjZFzEQlR23HaL"/>
+<div class="absolute bottom-2 left-2 font-mono text-[9px] bg-black/50 px-1">CAM_01_HELMET</div>
+</div>
+<div class="grid grid-cols-4 gap-1">
+<div class="aspect-square bg-slate-900 border border-primary/40 overflow-hidden"><img class="opacity-50" data-alt="thermal imaging" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1DvCJnfbuHGLkw_V4cG_0L0xjOc0hZcsz0vbQlCga06F_hCno5Rg6hLqXeHv3qAFHUB569TYoZRaTYqMXshxyv8A0XImlJrf1IHZGB-Onb6Y7Mj5ULi85ENGSMHeb9fdhfGFHxXqjs7yzbjcHrU6ZYBCuUYL5NFVfuNbPf81YrIeZWlyGYdHwEpNM5Sh1BuTn17DQX2GmfS94yfNOYpd9tFy5Xy01jyw7MXM4odjCTwIAnbpwom9dN5BQAQ38qs1BTKxqL1Yy6Wa2"/></div>
+<div class="aspect-square bg-slate-900 border border-slate-700"></div>
+<div class="aspect-square bg-slate-900 border border-slate-700"></div>
+<div class="aspect-square bg-slate-900 border border-slate-700"></div>
+</div>
+</div>
+<!-- Sensor Matrix -->
+<div class="glass-panel p-4 flex flex-col gap-4">
+<h3 class="font-headline text-xs font-bold uppercase tracking-widest border-b border-white/5 pb-2">聚焦队员传感器矩阵 (FF-01)</h3>
+<div class="space-y-4">
+<!-- BPM -->
+<div>
+<div class="flex justify-between font-mono text-[10px] mb-1">
+<span>心率</span>
+<span class="text-secondary">112 BPM (活跃)</span>
+</div>
+<div class="flex segmented-bar h-2">
+<div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div>
+</div>
+</div>
+<!-- SPO2 -->
+<div>
+<div class="flex justify-between font-mono text-[10px] mb-1">
+<span>血氧饱和度</span>
+<span class="text-secondary">98% (正常)</span>
+</div>
+<div class="flex segmented-bar h-2">
+<div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-secondary"></div><div class="bg-surface-container-highest"></div>
+</div>
+</div>
+<!-- TEMP -->
+<div>
+<div class="flex justify-between font-mono text-[10px] mb-1">
+<span>体温</span>
+<span>37.2°C (正常)</span>
+</div>
+<div class="flex segmented-bar h-2">
+<div class="bg-white/20"></div><div class="bg-white/20"></div><div class="bg-white/20"></div><div class="bg-white/20"></div><div class="bg-white/20"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div>
+</div>
+</div>
+<!-- AIR -->
+<div class="bg-primary/10 p-2 border border-primary/20">
+<div class="flex justify-between font-mono text-[10px] mb-1">
+<span class="text-primary font-bold">气瓶余量 - 告警!</span>
+<span class="text-primary">22.4%</span>
+</div>
+<div class="flex segmented-bar h-2">
+<div class="bg-primary"></div><div class="bg-primary"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div><div class="bg-surface-container-highest"></div>
+</div>
+</div>
+</div>
+</div>
+</aside>
+<!-- Right HUD Panel -->
+<aside class="absolute right-6 top-6 w-[300px] flex flex-col gap-4 z-10 h-[calc(100%-120px)]">
+<!-- ALERTS -->
+<div class="glass-panel flex flex-col overflow-hidden">
+<div class="bg-primary p-2 flex justify-between items-center">
+<span class="font-headline text-[10px] font-black text-white uppercase tracking-widest">实时告警列表</span>
+<span class="font-mono text-[10px] text-white">02</span>
+</div>
+<div class="flex flex-col divide-y divide-white/5">
+<div class="p-3 bg-primary/20 animate-pulse border-l-4 border-primary">
+<div class="flex justify-between items-start">
+<span class="font-mono text-[11px] font-bold text-primary">SOS 触发 // FF-02</span>
+<span class="font-mono text-[9px] text-primary">CRIT_P0</span>
+</div>
+<p class="font-body text-[10px] text-on-surface/80 mt-1 uppercase">人员倒地监测：Sector Delta-4. 请求立即撤离/搜救。</p>
+</div>
+<div class="p-3 bg-tertiary/10 border-l-4 border-tertiary">
+<div class="flex justify-between items-start">
+<span class="font-mono text-[11px] font-bold text-tertiary">AI 检测：疑似目标</span>
+<span class="font-mono text-[9px] text-tertiary">SCAN_P1</span>
+</div>
+<p class="font-body text-[10px] text-on-surface/80 mt-1 uppercase">在北翼检测到潜在的结构失效特征信号。</p>
+</div>
+</div>
+</div>
+<!-- TASKS -->
+<div class="glass-panel flex flex-col">
+<div class="bg-surface-container-high p-2 flex justify-between items-center border-b border-white/5">
+<span class="font-headline text-[10px] font-bold uppercase tracking-widest">当前任务列表</span>
+<span class="material-symbols-outlined text-xs">checklist</span>
+</div>
+<div class="p-4 space-y-4">
+<div class="space-y-1">
+<div class="flex justify-between font-mono text-[9px]">
+<span>GRID ALPHA-1 区域搜查</span>
+<span class="text-secondary">执行中 (85%)</span>
+</div>
+<div class="h-1 bg-surface-container-lowest flex">
+<div class="h-full bg-secondary w-[85%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between font-mono text-[9px]">
+<span>幸存者定位 (ST-2)</span>
+<span class="text-primary">执行中 (12%)</span>
+</div>
+<div class="h-1 bg-surface-container-lowest flex">
+<div class="h-full bg-primary w-[12%]"></div>
+</div>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between font-mono text-[9px]">
+<span>通风系统安全保障</span>
+<span class="text-slate-500">进行中</span>
+</div>
+<div class="h-1 bg-surface-container-lowest"></div>
+</div>
+</div>
+</div>
+<!-- PERSONNEL SUMMARY -->
+<div class="glass-panel flex flex-col flex-1 overflow-hidden">
+<div class="bg-surface-container-high p-2 border-b border-white/5">
+<span class="font-headline text-[10px] font-bold uppercase tracking-widest">人员安全生命体征摘要 [4]</span>
+</div>
+<div class="flex-1 overflow-y-auto">
+<table class="w-full text-left border-collapse">
+<thead class="sticky top-0 bg-surface text-[8px] font-mono text-slate-500 uppercase">
+<tr>
+<th class="p-2">ID</th>
+<th class="p-2">心率</th>
+<th class="p-2">SPO2</th>
+<th class="p-2">状态</th>
+</tr>
+</thead>
+<tbody class="font-mono text-[10px]">
+<tr class="bg-secondary/5 border-b border-white/5">
+<td class="p-2 text-secondary font-bold">FF-01</td>
+<td class="p-2">112</td>
+<td class="p-2">98</td>
+<td class="p-2"><span class="w-2 h-2 bg-secondary inline-block"></span></td>
+</tr>
+<tr class="bg-primary/20 border-b border-white/5">
+<td class="p-2 text-primary font-bold">FF-02</td>
+<td class="p-2">145</td>
+<td class="p-2">89</td>
+<td class="p-2"><span class="w-2 h-2 bg-primary inline-block animate-ping"></span></td>
+</tr>
+<tr class="border-b border-white/5">
+<td class="p-2 font-bold">FF-03</td>
+<td class="p-2">98</td>
+<td class="p-2">99</td>
+<td class="p-2"><span class="w-2 h-2 bg-secondary inline-block"></span></td>
+</tr>
+<tr class="border-b border-white/5">
+<td class="p-2 font-bold">FF-04</td>
+<td class="p-2">105</td>
+<td class="p-2">97</td>
+<td class="p-2"><span class="w-2 h-2 bg-secondary inline-block"></span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</aside>
+<!-- Bottom Center Metrics Strip -->
+<div class="absolute bottom-6 left-1/2 -translate-x-1/2 glass-panel flex gap-8 px-8 py-3 items-center z-20">
+<div class="flex flex-col">
+<span class="font-headline text-[8px] text-slate-500 uppercase tracking-tighter">火情等级</span>
+<span class="font-mono text-primary font-bold text-lg">CAT-03</span>
+</div>
+<div class="w-[1px] h-8 bg-white/10"></div>
+<div class="flex flex-col">
+<span class="font-headline text-[8px] text-slate-500 uppercase tracking-tighter">已确认幸存</span>
+<span class="font-mono text-secondary font-bold text-lg">02</span>
+</div>
+<div class="w-[1px] h-8 bg-white/10"></div>
+<div class="flex flex-col">
+<span class="font-headline text-[8px] text-slate-500 uppercase tracking-tighter">环境风速</span>
+<span class="font-mono text-on-surface font-bold text-lg">NW 14m/s</span>
+</div>
+<div class="w-[1px] h-8 bg-white/10"></div>
+<div class="flex flex-col">
+<span class="font-headline text-[8px] text-slate-500 uppercase tracking-tighter">链路稳定性</span>
+<span class="font-mono text-secondary font-bold text-lg">99.8%</span>
+</div>
+</div>
+</main>
+<!-- Footer Marquee -->
+<footer class="fixed bottom-0 w-full flex items-center justify-between px-4 z-50 bg-[#030509] text-[#00E676] font-mono text-[11px] uppercase h-10 border-t border-[#FF3C00]/10">
+<div class="flex gap-4 items-center">
+<span class="flex items-center gap-1"><span class="w-2 h-2 bg-secondary"></span> 系统就绪</span>
+<span class="text-slate-700">|</span>
+<span class="flex items-center gap-1"><span class="w-2 h-2 bg-secondary"></span> 卫星链路稳定</span>
+</div>
+<div class="overflow-hidden flex-1 mx-8 relative">
+<div class="whitespace-nowrap flex gap-12 text-slate-500 marquee-container">
+<span class="text-secondary">FF-03: 我在2层东北角，发现一名被困人员，需要医疗支持...</span>
+<span>数据接收: 104.2MB/S</span>
+<span>加密协议: AES-256-KINETIC</span>
+<span>经纬度: 34.0522° N, 118.2437° W</span>
+<span>系统运行时间: 04:12:44:02</span>
+</div>
+</div>
+<span class="text-slate-500">v4.2.0-KINETIC</span>
+</footer>
+</body></html>
