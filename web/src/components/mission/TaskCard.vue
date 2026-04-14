@@ -22,7 +22,7 @@ defineProps({
       </div>
       <div class="task-info">
         <div class="desc mono-small">状态: {{ statusDesc }}</div>
-        <div class="progress-wrapper" v-if="typeClass === 'ACTIVE'">
+        <div class="progress-wrapper" v-if="progress > 0">
           <div class="progress-bar">
             <div class="progress-fill" :style="{ width: progress + '%' }"></div>
           </div>
@@ -44,6 +44,7 @@ defineProps({
 .type-active { border-left-color: var(--color-accent-safe); }
 .type-analyzing { border-left-color: var(--color-accent-ai); }
 .type-queued { border-left-color: var(--color-text-muted); } /* 修复：--color-muted 未定义，改用 --color-text-muted */
+.type-done { border-left-color: var(--color-accent-sos); }
 
 .task-header {
   display: flex;
@@ -56,6 +57,7 @@ defineProps({
 }
 .type-active .status-label { color: var(--color-accent-safe); }
 .type-analyzing .status-label { color: var(--color-accent-ai); }
+.type-done .status-label { color: var(--color-accent-sos); }
 
 .task-body {
   display: flex;
@@ -73,6 +75,7 @@ defineProps({
   border-radius: 4px;
 }
 .type-active .task-icon { color: var(--color-accent-safe); }
+.type-done .task-icon { color: var(--color-accent-sos); }
 
 .task-info {
   flex: 1;
@@ -104,5 +107,9 @@ defineProps({
   left: 0;
   height: 2px; /* 规范要求: 2px 进度线 */
   background-color: var(--color-accent-safe);
+}
+
+.type-done .progress-fill {
+  background-color: var(--color-accent-sos);
 }
 </style>

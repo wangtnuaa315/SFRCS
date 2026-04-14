@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="zh-CN"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;family=Inter:wght@300;400;500;600;700&amp;family=JetBrains+Mono:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-primary": "#b42800",
+                        "inverse-on-surface": "#2d3036",
+                        "error-container": "#93000a",
+                        "tertiary-fixed-dim": "#ddb8ff",
+                        "on-error-container": "#ffdad6",
+                        "surface-container": "#1c2025",
+                        "surface-variant": "#32353b",
+                        "tertiary-container": "#b66dff",
+                        "on-primary-container": "#560e00",
+                        "tertiary-fixed": "#f0dbff",
+                        "on-secondary": "#003918",
+                        "surface-bright": "#36393f",
+                        "background": "#030509",
+                        "surface-container-high": "#272a30",
+                        "primary-container": "#ff562d",
+                        "outline": "#ae887f",
+                        "on-error": "#690005",
+                        "on-background": "#e0e2ea",
+                        "on-primary-fixed-variant": "#8a1c00",
+                        "on-tertiary-fixed-variant": "#6800b4",
+                        "primary-fixed": "#ffdad2",
+                        "outline-variant": "#5e3f38",
+                        "on-tertiary": "#490080",
+                        "on-tertiary-container": "#400071",
+                        "surface": "#101419",
+                        "surface-container-low": "#181c21",
+                        "surface-dim": "#101419",
+                        "primary": "#ff3c00",
+                        "on-secondary-fixed": "#00210b",
+                        "primary-fixed-dim": "#ffb4a2",
+                        "on-secondary-fixed-variant": "#005226",
+                        "inverse-surface": "#e0e2ea",
+                        "on-primary": "#621100",
+                        "on-secondary-container": "#00622e",
+                        "secondary-fixed-dim": "#00e475",
+                        "surface-tint": "#ffb4a2",
+                        "surface-container-lowest": "#0b0e14",
+                        "secondary": "#00e676",
+                        "error": "#ffb4ab",
+                        "secondary-fixed": "#62ff96",
+                        "on-surface-variant": "#e8bdb3",
+                        "on-primary-fixed": "#3c0700",
+                        "surface-container-highest": "#32353b",
+                        "tertiary": "#9333ea",
+                        "secondary-container": "#05e777",
+                        "on-surface": "#e0e2ea",
+                        "on-tertiary-fixed": "#2c0051"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0px",
+                        "lg": "0px",
+                        "xl": "0px",
+                        "full": "0px"
+                    },
+                    "fontFamily": {
+                        "headline": ["Space Grotesk", "sans-serif"],
+                        "body": ["Inter", "sans-serif"],
+                        "label": ["JetBrains Mono", "monospace"]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #030509;
+            color: #e0e2ea;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanline {
+            background: linear-gradient(to bottom, transparent 50%, rgba(255, 60, 0, 0.05) 50.5%, transparent 51%);
+            background-size: 100% 4px;
+        }
+        .map-gradient {
+            background: radial-gradient(circle at center, transparent 0%, #030509 90%);
+        }
+        .tactical-glow {
+            box-shadow: 0 0 15px rgba(255, 60, 0, 0.2);
+        }
+    </style>
+</head>
+<body class="h-screen w-full relative">
+<!-- MAP DESKTOP BACKGROUND -->
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full grayscale contrast-125 brightness-[0.3]" data-location="Tokyo" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBH2FnCtN6vPEq6EjS7I2N8NARv0butarUsAruJtYG1Ovjllvwe0zHVf100fIizX6gvXzUnS6xZSwjf_zutrUyhb25YoboUsHt3Co8DiXahk79cRJWfiVptpKlVwghNHzFHsrYeagtRkFSagxGeKmiih3LoR2R_mJDbk3NiiH-okOgJMaSCBWFOEDwc4LEku4E2gOS5oVM38bCrV8N66Tvi2fXR6vDgnumndd3ubql2BlNNQPBu1OFUOwMhZFwJ1pIArWWB87qJ-e4'); background-size: cover; background-position: center;">
+<div class="absolute inset-0 map-gradient"></div>
+</div>
+<!-- Center Focus Tactical Overlay -->
+<div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10">
+<div class="w-[600px] h-[600px] border border-primary/20 rounded-full flex items-center justify-center opacity-40">
+<div class="w-[400px] h-[400px] border border-primary/40 rounded-full flex items-center justify-center">
+<div class="w-[200px] h-[200px] border border-primary/60 rounded-full animate-pulse"></div>
+</div>
+</div>
+<!-- Tech Markers -->
+<div class="absolute top-20 left-40 flex flex-col items-center">
+<div class="bg-primary px-2 py-0.5 text-[10px] font-label text-on-primary">FF-01</div>
+<div class="w-0.5 h-12 bg-primary"></div>
+<div class="w-2 h-2 bg-primary rotate-45 shadow-[0_0_10px_#ff3c00]"></div>
+</div>
+<div class="absolute bottom-32 right-48 flex flex-col items-center">
+<div class="bg-secondary px-2 py-0.5 text-[10px] font-label text-on-secondary">TL-02</div>
+<div class="w-0.5 h-12 bg-secondary"></div>
+<div class="w-2 h-2 bg-secondary rotate-45 shadow-[0_0_10px_#00e676]"></div>
+</div>
+</div>
+</div>
+<!-- SHARED COMPONENT: TopNavBar -->
+<nav class="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] border border-orange-600/30 bg-orange-600/20 backdrop-blur-xl flex justify-between items-center px-6 py-3 z-50 tactical-glow">
+<div class="flex items-center gap-6">
+<span class="text-2xl font-black text-orange-600 dark:text-orange-500 tracking-widest font-headline">COMMAND ALPHA</span>
+<div class="h-4 w-px bg-orange-600/30"></div>
+<div class="flex gap-4 font-['Space_Grotesk'] font-bold uppercase tracking-tighter">
+<span class="text-slate-400 hover:text-orange-400 cursor-pointer transition-colors duration-150">MAP</span>
+<span class="text-orange-500 border-b-2 border-orange-500 pb-1 cursor-default">UNIT</span>
+<span class="text-slate-400 hover:text-orange-400 cursor-pointer transition-colors duration-150">DATA</span>
+<span class="text-slate-400 hover:text-orange-400 cursor-pointer transition-colors duration-150">AI</span>
+</div>
+</div>
+<div class="flex items-center gap-8 font-label text-xs">
+<div class="flex items-center gap-2">
+<span class="text-secondary">[加密网链连接]</span>
+<span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+</div>
+<div class="text-on-background/70">时间: <span class="text-on-background">14:23:45</span></div>
+<div class="text-on-background/70">活动分队: <span class="text-primary font-bold">12</span></div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-500 cursor-pointer hover:bg-orange-600/10 p-1 transition-colors">notifications_active</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-500 cursor-pointer hover:bg-orange-600/10 p-1 transition-colors">emergency</span>
+<span class="material-symbols-outlined text-orange-600 dark:text-orange-500 cursor-pointer hover:bg-orange-600/10 p-1 transition-colors">settings_input_antenna</span>
+</div>
+</nav>
+<!-- SHARED COMPONENT: SideNavBar -->
+<aside class="fixed left-4 top-24 bottom-4 w-64 border-r border-orange-600/20 bg-slate-950/70 backdrop-blur-md flex flex-col h-full z-40">
+<div class="p-4 border-b border-orange-600/20">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-surface-container-high border border-primary/40 flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person_pin</span>
+</div>
+<div>
+<h2 class="font-bold text-orange-500 font-headline">[指挥中心]</h2>
+<p class="font-['JetBrains_Mono'] text-[10px] tracking-tight text-slate-500">SECTOR: SOUTH_OPS</p>
+</div>
+</div>
+</div>
+<div class="flex-1 py-4 flex flex-col gap-1">
+<div class="bg-orange-600/20 text-orange-500 border-l-4 border-orange-500 flex items-center px-4 py-3 gap-3 font-['JetBrains_Mono'] text-xs tracking-tight cursor-pointer">
+<span class="material-symbols-outlined">radar</span>
+<span>SECTOR_01</span>
+</div>
+<div class="text-slate-500 opacity-80 hover:bg-slate-800/50 flex items-center px-4 py-3 gap-3 font-['JetBrains_Mono'] text-xs tracking-tight cursor-pointer transition-colors">
+<span class="material-symbols-outlined">groups</span>
+<span>PERSONNEL</span>
+</div>
+<div class="text-slate-500 opacity-80 hover:bg-slate-800/50 flex items-center px-4 py-3 gap-3 font-['JetBrains_Mono'] text-xs tracking-tight cursor-pointer transition-colors">
+<span class="material-symbols-outlined">videocam</span>
+<span>DRONE_FEED</span>
+</div>
+<div class="text-slate-500 opacity-80 hover:bg-slate-800/50 flex items-center px-4 py-3 gap-3 font-['JetBrains_Mono'] text-xs tracking-tight cursor-pointer transition-colors">
+<span class="material-symbols-outlined">thermostat</span>
+<span>THERMAL</span>
+</div>
+<div class="text-slate-500 opacity-80 hover:bg-slate-800/50 flex items-center px-4 py-3 gap-3 font-['JetBrains_Mono'] text-xs tracking-tight cursor-pointer transition-colors">
+<span class="material-symbols-outlined">terminal</span>
+<span>LOGS</span>
+</div>
+</div>
+<div class="p-4 flex flex-col gap-4">
+<button class="w-full bg-primary py-3 text-on-primary font-bold tracking-tighter uppercase text-sm hover:brightness-110 active:scale-95 transition-all">
+                DEPLOY_SQUAD
+            </button>
+<div class="flex border-t border-orange-600/20 pt-4 gap-4">
+<div class="flex-1 flex flex-col items-center gap-1 opacity-60 hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined">sync</span>
+<span class="text-[10px] font-label">SYNC</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-1 opacity-60 hover:opacity-100 cursor-pointer">
+<span class="material-symbols-outlined">lock</span>
+<span class="text-[10px] font-label">LOCK</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- MAIN CONTENT HUD PANELS -->
+<main class="ml-72 mr-4 mt-28 mb-4 relative z-10 grid grid-cols-12 gap-6 h-[calc(100vh-140px)]">
+<!-- LEFT FLOATING STACK -->
+<section class="col-span-4 flex flex-col gap-6">
+<!-- Panel A: LIVE DRONE FEED -->
+<div class="bg-surface-container-low/70 backdrop-blur-md border border-outline-variant/20 p-4">
+<div class="flex justify-between items-center mb-3">
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 bg-error rounded-full animate-pulse"></span>
+<h3 class="text-sm font-headline font-bold uppercase tracking-widest text-on-background">无人机实时监控</h3>
+</div>
+<span class="text-[10px] font-label text-tertiary">ALT: 124m</span>
+</div>
+<div class="relative aspect-video bg-black overflow-hidden group">
+<img alt="Drone view" class="w-full h-full object-cover mix-blend-screen opacity-80" data-alt="tactical thermal drone footage of a building exterior with high contrast purple and orange heat signatures" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBY5PFUqMT5LWxSNwv6HXiPAiK-GxaCyOC7yi0fMtXabQInOm64S0S9xurX8jyqJ6z_Wn4XED0WyMMOipOnP9yrFKNJK83GPHv3eQjH7mBoKwNyGyYPhA1pqz-W4qVPWYUl35C4lTTcjD2FQEIQV1NyAeuYTJD7W3onLK5bfPm5IKYHI80otf_e4jGkxswyuAO7d-4qBlHQQrFgIpTWqRsVErZobNvYt1Kj8Lo5oJep7hJTvt1WwVJ46RxJu1QQ5y6pUYxGL7tKOv8"/>
+<div class="absolute inset-0 scanline pointer-events-none"></div>
+<!-- AI Bounding Box -->
+<div class="absolute top-1/4 left-1/4 w-32 h-20 border-2 border-tertiary/60">
+<div class="absolute -top-6 left-0 bg-tertiary/20 backdrop-blur-sm px-1.5 py-0.5 border border-tertiary/40">
+<span class="text-[10px] font-label text-tertiary">[毫米波AI: 检测到呼吸信号]</span>
+</div>
+</div>
+<!-- HUD Overlays -->
+<div class="absolute top-2 left-2 flex flex-col gap-1">
+<div class="bg-black/60 px-1 font-label text-[8px] text-white">LAT: 35.6895</div>
+<div class="bg-black/60 px-1 font-label text-[8px] text-white">LON: 139.6917</div>
+</div>
+<div class="absolute bottom-2 right-2 flex items-center gap-2">
+<span class="text-[10px] font-label text-white/50">REC</span>
+<div class="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- Panel B: SENSOR MATRIX -->
+<div class="bg-surface-container-low/70 backdrop-blur-md border border-outline-variant/20 p-4 flex-1">
+<div class="flex items-center gap-2 mb-4">
+<span class="material-symbols-outlined text-secondary text-sm">analytics</span>
+<h3 class="text-sm font-headline font-bold uppercase tracking-widest text-on-background">传感器矩阵</h3>
+</div>
+<div class="space-y-4">
+<!-- Unit FF-03 -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-3 border-l-2 border-secondary">
+<div class="text-[10px] font-label text-secondary mb-1">UNIT // FF-03</div>
+<div class="flex justify-between items-end">
+<span class="font-label text-lg font-bold">98%</span>
+<span class="text-[10px] font-label opacity-40">SPO2</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-3 border-l-2 border-secondary">
+<div class="text-[10px] font-label text-secondary mb-1">PULSE // BPM</div>
+<div class="flex justify-between items-end">
+<span class="font-label text-lg font-bold text-secondary">112</span>
+<span class="text-[10px] font-label opacity-40">ACTIVE</span>
+</div>
+</div>
+</div>
+<!-- Unit FF-04 -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest p-3 border-l-2 border-primary">
+<div class="text-[10px] font-label text-primary mb-1">BODY // TEMP</div>
+<div class="flex justify-between items-end">
+<span class="font-label text-lg font-bold">37.2°C</span>
+<span class="text-[10px] font-label opacity-40">NORMAL</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-3 border-l-2 border-tertiary">
+<div class="text-[10px] font-label text-tertiary mb-1">AIR // LVL</div>
+<div class="flex justify-between items-end">
+<span class="font-label text-lg font-bold">22.4%</span>
+<span class="text-[10px] font-label opacity-40">CRITICAL</span>
+</div>
+</div>
+</div>
+<!-- Raw Stream -->
+<div class="mt-6 font-label text-[10px] text-on-background/40 leading-tight">
+<p>FF-03 DATA_TX: SUCCESS [12.4kbps]</p>
+<p>COORD: 35.6812 N | 139.7671 E</p>
+<p>ST_AUTH: [V-2_VERIFIED]</p>
+<div class="w-full h-1 bg-surface-container-high mt-2 relative overflow-hidden">
+<div class="absolute inset-y-0 left-0 bg-secondary w-2/3"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- EMPTY CENTER FOR MAP VISIBILITY -->
+<section class="col-span-4 relative flex items-end justify-center pb-8">
+<div class="bg-background/80 backdrop-blur-md border border-outline-variant/30 px-6 py-3 flex gap-8 items-center">
+<div class="text-center">
+<div class="text-[10px] font-label text-primary">FIRE_LVL</div>
+<div class="font-headline font-bold text-xl">CAT_04</div>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="text-center">
+<div class="text-[10px] font-label text-secondary">PERSONS</div>
+<div class="font-headline font-bold text-xl">04_SAFE</div>
+</div>
+<div class="w-px h-8 bg-outline-variant/30"></div>
+<div class="text-center">
+<div class="text-[10px] font-label text-tertiary">WIND</div>
+<div class="font-headline font-bold text-xl">14_NW</div>
+</div>
+</div>
+</section>
+<!-- RIGHT FLOATING STACK -->
+<section class="col-span-4 flex flex-col gap-6">
+<!-- SOS Alert Card -->
+<div class="bg-primary border border-primary/50 p-6 animate-pulse shadow-[0_0_20px_rgba(255,60,0,0.4)]">
+<div class="flex justify-between items-start mb-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-primary text-3xl" style="font-variation-settings: 'FILL' 1;">warning</span>
+<h2 class="text-2xl font-black font-headline text-on-primary uppercase tracking-tighter">求救 // SOS</h2>
+</div>
+<span class="bg-on-primary text-primary px-2 py-0.5 font-label text-[10px] font-bold">IMMEDIATE</span>
+</div>
+<div class="font-bold text-on-primary/90 space-y-1">
+<p class="text-lg">FF-02 信号丢失</p>
+<p class="font-label opacity-80">COORDINATES: UNKNOWN</p>
+<p class="mt-4 pt-4 border-t border-on-primary/20 text-xl font-headline italic">"需要战术撤离"</p>
+</div>
+</div>
+<!-- Task Cards -->
+<div class="flex-1 flex flex-col gap-4">
+<div class="flex items-center gap-2 px-2">
+<span class="w-4 h-px bg-secondary"></span>
+<h3 class="text-xs font-label text-secondary uppercase tracking-[0.2em]">Active Tasks</h3>
+</div>
+<!-- Task Card 1 -->
+<div class="bg-surface-container-low/70 backdrop-blur-md border-l-4 border-secondary p-4 flex flex-col gap-3 group hover:bg-surface-container-high/70 transition-all">
+<div class="flex justify-between items-start">
+<h4 class="font-headline font-bold text-on-background">B栋渗透 (BUILDING B INFILTRATION)</h4>
+<span class="text-[10px] font-label text-secondary">ACTIVE</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-secondary">biotech</span>
+</div>
+<div class="flex-1">
+<div class="flex justify-between mb-1">
+<span class="text-[10px] font-label text-on-background/60">状态: 正在扫描3层</span>
+<span class="text-[10px] font-label text-secondary">65%</span>
+</div>
+<div class="w-full h-1 bg-surface-container-lowest">
+<div class="h-full bg-secondary w-2/3"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Task Card 2 -->
+<div class="bg-surface-container-low/70 backdrop-blur-md border-l-4 border-outline-variant p-4 flex flex-col gap-3 opacity-60">
+<div class="flex justify-between items-start">
+<h4 class="font-headline font-bold text-on-background">C区供水隔离 (SECTOR C WATER ISOLATION)</h4>
+<span class="text-[10px] font-label text-on-background/40">QUEUED</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-surface-container-lowest border border-outline-variant/30 flex items-center justify-center">
+<span class="material-symbols-outlined text-on-background/40">water_drop</span>
+</div>
+<div class="flex-1">
+<p class="text-[10px] font-label text-on-background/40">ETA: +12 MINS BY UNIT_08</p>
+</div>
+</div>
+</div>
+<!-- Task Card 3 -->
+<div class="bg-surface-container-low/70 backdrop-blur-md border-l-4 border-tertiary p-4 flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<h4 class="font-headline font-bold text-on-background">环境毒性评估 (TOXICITY ASSESSMENT)</h4>
+<span class="text-[10px] font-label text-tertiary">ANALYZING</span>
+</div>
+<div class="grid grid-cols-3 gap-2">
+<div class="h-1 bg-tertiary"></div>
+<div class="h-1 bg-tertiary animate-pulse"></div>
+<div class="h-1 bg-surface-container-lowest"></div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- FOOTER DATA STRIP -->
+<footer class="fixed bottom-0 left-0 w-full h-6 bg-surface-container-lowest flex items-center px-4 justify-between border-t border-outline-variant/10 z-50">
+<div class="flex items-center gap-6 font-label text-[9px] uppercase tracking-widest text-on-background/40">
+<span class="flex items-center gap-1"><span class="w-1 h-1 bg-secondary rounded-full"></span> SYSTEM_OK</span>
+<span>UPLINK: ACTIVE_SAT_09</span>
+<span>ENCRYPTION: AES_256_RSA</span>
+</div>
+<div class="font-label text-[9px] text-on-background/40">
+            FIRE_COMMAND_OS_v4.2.0 // (C) 2024 COMMAND_ALPHA_GRP
+        </div>
+</footer>
+<!-- Tactical HUD Corner Accents -->
+<div class="fixed top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-primary/40 pointer-events-none z-[60]"></div>
+<div class="fixed top-0 right-0 w-8 h-8 border-t-2 border-r-2 border-primary/40 pointer-events-none z-[60]"></div>
+<div class="fixed bottom-0 left-0 w-8 h-8 border-b-2 border-l-2 border-primary/40 pointer-events-none z-[60]"></div>
+<div class="fixed bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-primary/40 pointer-events-none z-[60]"></div>
+</body></html>

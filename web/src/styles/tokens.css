@@ -6,9 +6,11 @@
   --color-border: #1E293B; /* Slate-800，面板极细描边 */
   
   /* 战术指示色 (Tactical Accents) */
-  --color-accent-sos: #FF3C00; /* 霓虹橙: 危急求救 */
+  --color-accent-sos: #FF3C00; /* 霓虹橙: 危急求救/P0 */
+  --color-accent-warning: #F59E0B; /* 琥珀橙: 警告/P1 */
   --color-accent-safe: #00E676; /* 雷达绿: 在线安全/正常 */
   --color-accent-ai: #9333EA; /* 毫米波紫: 感知识别 */
+  --color-accent-link: #38BDF8; /* 链路蓝: 通信连通 */
   
   /* 文字与信息流 (Text & Info) */
   --color-text-primary: #F8FAFC; /* 冰晶白: 主信息 */

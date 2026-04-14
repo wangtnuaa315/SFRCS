@@ -32,3 +32,36 @@
   display: flex;
   align-items: center;
 }
+
+/* MapLibre 战术弹窗重写 */
+.maplibregl-popup-content {
+  background-color: var(--color-panel-bg) !important;
+  backdrop-filter: blur(var(--hud-blur)) !important;
+  -webkit-backdrop-filter: blur(var(--hud-blur)) !important;
+  border: 1px solid var(--color-border) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
+  color: var(--color-text-primary) !important;
+  padding: 12px !important;
+  border-radius: 0 !important; /* 战术硬朗边角 */
+}
+
+.maplibregl-popup-tip {
+  display: none !important; /* 去除原生三角指针，保持面板悬浮感 */
+}
+
+/* 战术弹窗内部结构 */
+.tactical-popup .popup-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tactical-popup .popup-row {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 4px;
+}

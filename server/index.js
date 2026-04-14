@@ -14,9 +14,9 @@ let activeClients = 0;
 // 模拟数据源
 const mockData = {
   personnel: [
-    { id: 'FF-01', location: [139.6917, 35.6895], spO2: 98, hr: 110, temp: 37.1 },
-    { id: 'FF-02', location: [139.6920, 35.6890], spO2: 90, hr: 135, temp: 38.2, isMayday: true },
-    { id: 'FF-03', location: [139.6910, 35.6905], spO2: 99, hr: 95, temp: 36.8 }
+    { id: 'FF-01', location: [116.3912, 39.9073], spO2: 98, hr: 110, temp: 37.1 },
+    { id: 'FF-02', location: [116.3980, 39.9050], spO2: 90, hr: 135, temp: 38.2, isMayday: true },
+    { id: 'FF-03', location: [116.3850, 39.9080], spO2: 99, hr: 95, temp: 36.8 }
   ],
   tasks: [
     { title: 'B栋渗透', type: 'ACTIVE', progress: 65, status: '正在扫描3层' },
